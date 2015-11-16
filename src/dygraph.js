@@ -1807,6 +1807,12 @@ Dygraph.prototype.updateSelection_ = function(opt_animFraction) {
     var px = this.previousVerticalX_;
     ctx.clearRect(px - maxCircleSize - 1, 0,
                   2 * maxCircleSize + 2, this.height_);
+
+    for (i = 0; i < this.previousSelPoints_.length; i++) {
+      px = this.previousSelPoints_[i].canvasx;
+      ctx.clearRect(px - maxCircleSize - 1, 0,
+                    2 * maxCircleSize + 2, this.height_);
+    }
   }
 
   if (this.selPoints_.length > 0) {
@@ -1826,11 +1832,12 @@ Dygraph.prototype.updateSelection_ = function(opt_animFraction) {
       ctx.lineWidth = this.getNumericOption('strokeWidth', pt.name);
       ctx.strokeStyle = color;
       ctx.fillStyle = color;
-      callback.call(this, this, pt.name, ctx, canvasx, pt.canvasy,
-          color, circleSize, pt.idx);
+      callback.call(this, this, pt.name, ctx, pt.canvasx, pt.canvasy,
+                    color, circleSize, pt.idx);
     }
     ctx.restore();
 
+    this.previousSelPoints_ = this.selPoints_;
     this.previousVerticalX_ = canvasx;
   }
 };
@@ -1863,7 +1870,17 @@ Dygraph.prototype.setSelection = function(row, opt_seriesName, opt_locked) {
       var setRow = row - this.getLeftBoundary_(setIdx);
       if (setRow < points.length && points[setRow].idx == row) {
         var point = points[setRow];
-        if (point.yval !== null) this.selPoints_.push(point);
+        if (point.yval !== null && point.yval !== undefined) {
+          this.selPoints_.push(point);
+        } else {
+          for (var i = setRow - 1; i >=0; i--) {
+            point = points[i];
+            if (point.yval !== null && point.yval !== undefined) {
+              this.selPoints_.push(point);
+              break;
+            }
+          }
+        }
       } else {
         for (var pointIdx = 0; pointIdx < points.length; ++pointIdx) {
           var point = points[pointIdx];
