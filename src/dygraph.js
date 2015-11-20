@@ -1548,8 +1548,8 @@ Dygraph.prototype.findClosestRow = function(domX) {
     for (var j = 0; j < len; j++) {
       var point = points[j];
       if (!utils.isValidPoint(point, true)) continue;
-      var dist = Math.abs(point.canvasx - domX);
-      if (dist < minDistX) {
+      var dist = domX - point.canvasx;
+      if (dist >= 0 && dist < minDistX) {
         minDistX = dist;
         closestRow = point.idx;
       }
