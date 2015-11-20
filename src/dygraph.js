@@ -1899,7 +1899,9 @@ Dygraph.prototype.setSelection = function(row, opt_seriesName, opt_locked) {
   }
 
   if (this.selPoints_.length) {
-    this.lastx_ = this.selPoints_[0].xval;
+    this.lastx_ = this.selPoints_.reduce(function (r, v) {
+      return r.xval > v.xval ? r : v;
+    }).xval;
   } else {
     this.lastx_ = -1;
   }
