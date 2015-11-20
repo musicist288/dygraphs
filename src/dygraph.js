@@ -3620,5 +3620,6 @@ Dygraph.dateTicker = DygraphTickers.dateTicker;
 Dygraph.Granularity = DygraphTickers.Granularity;
 Dygraph.getDateAxis = DygraphTickers.getDateAxis;
 Dygraph.floatFormat = utils.floatFormat;
+Dygraph.numberValueFormatter = utils.numberValueFormatter;
 
 export default Dygraph;
